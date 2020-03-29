@@ -2,4 +2,6 @@
 bin/
 obj/
 *.db
+*.shm
+*.wal
 appsettings.json
