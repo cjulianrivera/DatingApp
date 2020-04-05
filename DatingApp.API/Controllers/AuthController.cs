@@ -54,7 +54,7 @@ namespace DatingApp.API.Controllers
 
       if (userFromRepo == null)
       {
-        return Unauthorized();
+        return Unauthorized("Credenciales invalidas");
       }
 
       var claims = new[]
