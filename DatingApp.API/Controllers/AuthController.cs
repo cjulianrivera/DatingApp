@@ -3,9 +3,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using DatingApp.API.Data;
 using DatingApp.API.Dtos;
 using DatingApp.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -14,12 +16,15 @@ namespace DatingApp.API.Controllers
 {
   [Route("api/[controller]")]
   [ApiController]
+  [AllowAnonymous]
   public class AuthController : ControllerBase
   {
     private readonly IAuthRepository _repo;
     private readonly IConfiguration _config;
-    public AuthController(IAuthRepository repo, IConfiguration config)
+    private readonly IMapper _mapper;
+    public AuthController(IAuthRepository repo, IConfiguration config, IMapper mapper)
     {
+      this._mapper = mapper;
       this._config = config;
       this._repo = repo;
     }
@@ -38,7 +43,7 @@ namespace DatingApp.API.Controllers
 
       var userToCreate = new User
       {
-        Username = userForRegisterDto.Username
+        UserName = userForRegisterDto.Username
       };
 
       var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password);
@@ -60,7 +65,7 @@ namespace DatingApp.API.Controllers
       var claims = new[]
       {
             new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
-            new Claim(ClaimTypes.Name, userFromRepo.Username)
+            new Claim(ClaimTypes.Name, userFromRepo.UserName)
         };
 
       var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
@@ -78,9 +83,12 @@ namespace DatingApp.API.Controllers
 
       var token = tokenHandler.CreateToken(tokenDescriptor);
 
+      var user = _mapper.Map<UserForListDto>(userFromRepo);
+
       return Ok(new
       {
-        token = tokenHandler.WriteToken(token)
+        token = tokenHandler.WriteToken(token),
+        user
       });
     }
   }

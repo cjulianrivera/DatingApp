@@ -2,18 +2,21 @@ import { Injectable } from '@angular/core';
 import * as alertify from 'alertifyjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AlertifyService {
   constructor() {}
 
   confirm(message: string, okCallback: () => any) {
-    alertify.confirm(message, (e: any) => {
-      if (e) {
-        okCallback();
-      } else {
-      }
-    });
+    alertify
+      .confirm(message, (e: any) => {
+        if (e) {
+          okCallback();
+        } else {
+        }
+      })
+      .autoCancel(5)
+      .setHeader('Confirmacion');
   }
 
   error(message: string) {
