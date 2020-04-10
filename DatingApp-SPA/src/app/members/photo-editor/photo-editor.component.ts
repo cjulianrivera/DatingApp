@@ -64,7 +64,14 @@ export class PhotoEditorComponent implements OnInit {
           isMain: res.isMain,
         };
         this.photos.push(photo);
+        if (photo.isMain) {
+          this.authService.updatePhotoUrl(photo.url);
+        }
       }
+    };
+
+    this.uploader.onErrorItem = (item) => {
+      this.alertifyService.error('Can´t load de image ' + item.file.name);
     };
   }
 
