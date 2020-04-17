@@ -3,33 +3,20 @@ using System;
 using DatingApp.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DatingApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20200416220531_AllDataBase")]
+    partial class AllDataBase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.0.0");
-
-            modelBuilder.Entity("DatingApp.API.Models.Like", b =>
-                {
-                    b.Property<int>("LikerId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("LikeeId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("LikerId", "LikeeId");
-
-                    b.HasIndex("LikeeId");
-
-                    b.ToTable("Likes");
-                });
 
             modelBuilder.Entity("DatingApp.API.Models.Photo", b =>
                 {
@@ -110,21 +97,6 @@ namespace DatingApp.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("DatingApp.API.Models.Like", b =>
-                {
-                    b.HasOne("DatingApp.API.Models.User", "Likee")
-                        .WithMany("Likers")
-                        .HasForeignKey("LikeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DatingApp.API.Models.User", "Liker")
-                        .WithMany("Likees")
-                        .HasForeignKey("LikerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("DatingApp.API.Models.Photo", b =>

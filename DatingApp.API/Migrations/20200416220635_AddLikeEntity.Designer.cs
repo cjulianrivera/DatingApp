@@ -9,14 +9,29 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DatingApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200408025611_AllDB")]
-    partial class AllDB
+    [Migration("20200416220635_AddLikeEntity")]
+    partial class AddLikeEntity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.0.0");
+
+            modelBuilder.Entity("DatingApp.API.Models.Like", b =>
+                {
+                    b.Property<int>("LikerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LikeeId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("LikerId", "LikeeId");
+
+                    b.HasIndex("LikeeId");
+
+                    b.ToTable("Likes");
+                });
 
             modelBuilder.Entity("DatingApp.API.Models.Photo", b =>
                 {
@@ -47,26 +62,6 @@ namespace DatingApp.API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Photos");
-                });
-
-            modelBuilder.Entity("DatingApp.API.Models.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NormalizedName")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Role");
                 });
 
             modelBuilder.Entity("DatingApp.API.Models.User", b =>
@@ -119,40 +114,25 @@ namespace DatingApp.API.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("DatingApp.API.Models.UserRole", b =>
+            modelBuilder.Entity("DatingApp.API.Models.Like", b =>
                 {
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                    b.HasOne("DatingApp.API.Models.User", "Likee")
+                        .WithMany("Likers")
+                        .HasForeignKey("LikeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("UserRole");
+                    b.HasOne("DatingApp.API.Models.User", "Liker")
+                        .WithMany("Likees")
+                        .HasForeignKey("LikerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DatingApp.API.Models.Photo", b =>
                 {
                     b.HasOne("DatingApp.API.Models.User", "User")
                         .WithMany("Photos")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("DatingApp.API.Models.UserRole", b =>
-                {
-                    b.HasOne("DatingApp.API.Models.Role", "Role")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DatingApp.API.Models.User", "User")
-                        .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
