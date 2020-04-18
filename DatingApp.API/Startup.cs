@@ -64,7 +64,11 @@ namespace DatingApp.API
         };
       });
 
-      services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+      services.AddDbContext<DataContext>(x =>
+      {
+        x.UseLazyLoadingProxies();
+        x.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+      });
 
       services.AddControllers(options =>
       {
