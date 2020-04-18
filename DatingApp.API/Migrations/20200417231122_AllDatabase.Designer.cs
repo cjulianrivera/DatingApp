@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DatingApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200416220635_AddLikeEntity")]
-    partial class AddLikeEntity
+    [Migration("20200417231122_AllDatabase")]
+    partial class AllDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,6 +31,45 @@ namespace DatingApp.API.Migrations
                     b.HasIndex("LikeeId");
 
                     b.ToTable("Likes");
+                });
+
+            modelBuilder.Entity("DatingApp.API.Models.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DateRead")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("MessageSent")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("RecipientDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RecipientId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("SenderDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipientId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("DatingApp.API.Models.Photo", b =>
@@ -100,11 +139,11 @@ namespace DatingApp.API.Migrations
                     b.Property<string>("LookingFor")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("TEXT");
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnType("BLOB");
 
-                    b.Property<string>("PasswordSalt")
-                        .HasColumnType("TEXT");
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("BLOB");
 
                     b.Property<string>("UserName")
                         .HasColumnType("TEXT");
@@ -125,6 +164,21 @@ namespace DatingApp.API.Migrations
                     b.HasOne("DatingApp.API.Models.User", "Liker")
                         .WithMany("Likees")
                         .HasForeignKey("LikerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DatingApp.API.Models.Message", b =>
+                {
+                    b.HasOne("DatingApp.API.Models.User", "Recipient")
+                        .WithMany("MessageReceived")
+                        .HasForeignKey("RecipientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DatingApp.API.Models.User", "Sender")
+                        .WithMany("MessageSent")
+                        .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
